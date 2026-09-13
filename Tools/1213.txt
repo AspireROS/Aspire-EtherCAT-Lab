@@ -1,0 +1,3 @@
+[InternetShortcut]
+URL=httpstools.hpmicro.com
+修改为文件后缀为url
