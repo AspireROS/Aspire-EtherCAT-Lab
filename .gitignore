@@ -1,2 +1,8 @@
+# Python 缓存和工具生成文件
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
 # Google App Engine generated folder
 appengine-generated/
