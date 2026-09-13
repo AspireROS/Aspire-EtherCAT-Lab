@@ -1,0 +1,243 @@
+/*
+ * Copyright (c) 2026 HPMicro
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * HPM5E31IPB1 pin multiplexing. Functions are grouped by peripheral so each
+ * module can be initialized independently. Keep this file synchronized with
+ * HPM5E31IPB1.csv and the schematic.
+ */
+
+#include "pinmux.h"
+#include "board.h"
+
+/**
+ * @brief USB 外设引脚初始化函数
+ * @detail 配置 USB0 ID、过流检测和电源控制引脚。
+ * @note 仅完成 IOC 复用配置，USB 控制器参数由 USB 驱动负责。
+ */
+void Usb_Init(void)
+{
+    // PF21：USB0 ID，用于识别主从/接口角色。
+    HPM_IOC->PAD[IOC_PAD_PF21].FUNC_CTL = IOC_PF21_FUNC_CTL_USB0_ID;
+    // PF20：USB0 过流输入，连接外部电源开关的 OC 信号。
+    HPM_IOC->PAD[IOC_PAD_PF20].FUNC_CTL = IOC_PF20_FUNC_CTL_USB0_OC;
+    // PF18：USB0 电源控制输出，控制外部 VBUS 开关。
+    HPM_IOC->PAD[IOC_PAD_PF18].FUNC_CTL = IOC_PF18_FUNC_CTL_USB0_PWR;
+}
+
+/**
+ * @brief UART0 外设引脚初始化函数
+ * @detail 配置 PA00/PA01 为 UART0 收发引脚；本板未复用 RTS/CTS。
+ */
+void Uart0_Init(void)
+{
+    // PA01：UART0 接收数据输入。
+    HPM_IOC->PAD[IOC_PAD_PA01].FUNC_CTL = IOC_PA01_FUNC_CTL_UART0_RXD;
+    // PA00：UART0 发送数据输出。
+    HPM_IOC->PAD[IOC_PAD_PA00].FUNC_CTL = IOC_PA00_FUNC_CTL_UART0_TXD;
+}
+
+/**
+ * @brief MCAN0 外设引脚初始化函数
+ * @detail 配置 CAN 收发数据线及外部收发器待机控制线。
+ */
+void Mcan0_Init(void)
+{
+    // PD01：MCAN0 接收数据输入。
+    HPM_IOC->PAD[IOC_PAD_PD01].FUNC_CTL = IOC_PD01_FUNC_CTL_MCAN0_RXD;
+    // PD00：MCAN0 发送数据输出。
+    HPM_IOC->PAD[IOC_PAD_PD00].FUNC_CTL = IOC_PD00_FUNC_CTL_MCAN0_TXD;
+    // PD02：CAN 收发器待机控制，默认电平由 CAN 驱动设置。
+    HPM_IOC->PAD[IOC_PAD_PD02].FUNC_CTL = IOC_PD02_FUNC_CTL_MCAN0_STBY;
+}
+
+/**
+ * @brief JTAG 调试接口引脚初始化函数
+ * @detail 配置 TCK/TDI/TDO/TMS/TRST 五条标准调试信号。
+ */
+void Jtag_Init(void)
+{
+    // PA06：JTAG 时钟输入 TCK。
+    HPM_IOC->PAD[IOC_PAD_PA06].FUNC_CTL = IOC_PA06_FUNC_CTL_JTAG_TCK;
+    // PA05：JTAG 数据输入 TDI。
+    HPM_IOC->PAD[IOC_PAD_PA05].FUNC_CTL = IOC_PA05_FUNC_CTL_JTAG_TDI;
+    // PA04：JTAG 数据输出 TDO。
+    HPM_IOC->PAD[IOC_PAD_PA04].FUNC_CTL = IOC_PA04_FUNC_CTL_JTAG_TDO;
+    // PA07：JTAG 模式选择输入 TMS。
+    HPM_IOC->PAD[IOC_PAD_PA07].FUNC_CTL = IOC_PA07_FUNC_CTL_JTAG_TMS;
+    // PA08：JTAG 复位输入 TRST。
+    HPM_IOC->PAD[IOC_PAD_PA08].FUNC_CTL = IOC_PA08_FUNC_CTL_JTAG_TRST;
+}
+
+/**
+ * @brief EtherCAT ESC P0 端口引脚初始化函数
+ * @detail 配置 P0 的接收/发送时钟、使能、错误和 4 位数据总线。
+ */
+void Esc_P0_Init(void)
+{
+    // P0 接收时钟、数据有效和错误指示。
+    HPM_IOC->PAD[IOC_PAD_PA21].FUNC_CTL = IOC_PA21_FUNC_CTL_ESC0_P0_RXCK;
+    // PA16：P0 接收数据有效信号 RXDV。
+    HPM_IOC->PAD[IOC_PAD_PA16].FUNC_CTL = IOC_PA16_FUNC_CTL_ESC0_P0_RXDV;
+    // PA23：P0 接收错误指示 RXER。
+    HPM_IOC->PAD[IOC_PAD_PA23].FUNC_CTL = IOC_PA23_FUNC_CTL_ESC0_P0_RXER;
+    // PA24：P0 发送时钟 TXCK。
+    HPM_IOC->PAD[IOC_PAD_PA24].FUNC_CTL = IOC_PA24_FUNC_CTL_ESC0_P0_TXCK;
+    // PA29：P0 发送使能 TXEN。
+    HPM_IOC->PAD[IOC_PAD_PA29].FUNC_CTL = IOC_PA29_FUNC_CTL_ESC0_P0_TXEN;
+    // PA17~PA20：P0 接收数据 RXD[0:3]。
+    HPM_IOC->PAD[IOC_PAD_PA17].FUNC_CTL = IOC_PA17_FUNC_CTL_ESC0_P0_RXD_0;
+    // PA18：P0 接收数据 RXD1。
+    HPM_IOC->PAD[IOC_PAD_PA18].FUNC_CTL = IOC_PA18_FUNC_CTL_ESC0_P0_RXD_1;
+    // PA19：P0 接收数据 RXD2。
+    HPM_IOC->PAD[IOC_PAD_PA19].FUNC_CTL = IOC_PA19_FUNC_CTL_ESC0_P0_RXD_2;
+    // PA20：P0 接收数据 RXD3。
+    HPM_IOC->PAD[IOC_PAD_PA20].FUNC_CTL = IOC_PA20_FUNC_CTL_ESC0_P0_RXD_3;
+    // PA25~PA28：P0 发送数据 TXD[0:3]。
+    HPM_IOC->PAD[IOC_PAD_PA25].FUNC_CTL = IOC_PA25_FUNC_CTL_ESC0_P0_TXD_0;
+    // PA26：P0 发送数据 TXD1。
+    HPM_IOC->PAD[IOC_PAD_PA26].FUNC_CTL = IOC_PA26_FUNC_CTL_ESC0_P0_TXD_1;
+    // PA27：P0 发送数据 TXD2。
+    HPM_IOC->PAD[IOC_PAD_PA27].FUNC_CTL = IOC_PA27_FUNC_CTL_ESC0_P0_TXD_2;
+    // PA28：P0 发送数据 TXD3。
+    HPM_IOC->PAD[IOC_PAD_PA28].FUNC_CTL = IOC_PA28_FUNC_CTL_ESC0_P0_TXD_3;
+}
+
+/**
+ * @brief EtherCAT ESC P1 端口引脚初始化函数
+ * @detail 配置 P1 的接收/发送时钟、使能、错误和 4 位数据总线。
+ */
+void Esc_P1_Init(void)
+{
+    // P1 接收时钟、数据有效和错误指示。
+    HPM_IOC->PAD[IOC_PAD_PF13].FUNC_CTL = IOC_PF13_FUNC_CTL_ESC0_P1_RXCK;
+    // PF08：P1 接收数据有效信号 RXDV。
+    HPM_IOC->PAD[IOC_PAD_PF08].FUNC_CTL = IOC_PF08_FUNC_CTL_ESC0_P1_RXDV;
+    // PF14：P1 接收错误指示 RXER。
+    HPM_IOC->PAD[IOC_PAD_PF14].FUNC_CTL = IOC_PF14_FUNC_CTL_ESC0_P1_RXER;
+    // PF02：P1 发送时钟 TXCK。
+    HPM_IOC->PAD[IOC_PAD_PF02].FUNC_CTL = IOC_PF02_FUNC_CTL_ESC0_P1_TXCK;
+    // PF07：P1 发送使能 TXEN。
+    HPM_IOC->PAD[IOC_PAD_PF07].FUNC_CTL = IOC_PF07_FUNC_CTL_ESC0_P1_TXEN;
+    // PF09~PF12：P1 接收数据 RXD[0:3]。
+    HPM_IOC->PAD[IOC_PAD_PF09].FUNC_CTL = IOC_PF09_FUNC_CTL_ESC0_P1_RXD_0;
+    // PF10：P1 接收数据 RXD1。
+    HPM_IOC->PAD[IOC_PAD_PF10].FUNC_CTL = IOC_PF10_FUNC_CTL_ESC0_P1_RXD_1;
+    // PF11：P1 接收数据 RXD2。
+    HPM_IOC->PAD[IOC_PAD_PF11].FUNC_CTL = IOC_PF11_FUNC_CTL_ESC0_P1_RXD_2;
+    // PF12：P1 接收数据 RXD3。
+    HPM_IOC->PAD[IOC_PAD_PF12].FUNC_CTL = IOC_PF12_FUNC_CTL_ESC0_P1_RXD_3;
+    // PF03~PF06：P1 发送数据 TXD[0:3]。
+    HPM_IOC->PAD[IOC_PAD_PF03].FUNC_CTL = IOC_PF03_FUNC_CTL_ESC0_P1_TXD_0;
+    // PF04：P1 发送数据 TXD1。
+    HPM_IOC->PAD[IOC_PAD_PF04].FUNC_CTL = IOC_PF04_FUNC_CTL_ESC0_P1_TXD_1;
+    // PF05：P1 发送数据 TXD2。
+    HPM_IOC->PAD[IOC_PAD_PF05].FUNC_CTL = IOC_PF05_FUNC_CTL_ESC0_P1_TXD_2;
+    // PF06：P1 发送数据 TXD3。
+    HPM_IOC->PAD[IOC_PAD_PF06].FUNC_CTL = IOC_PF06_FUNC_CTL_ESC0_P1_TXD_3;
+}
+
+/**
+ * @brief EtherCAT ESC 管理和控制引脚初始化函数
+ * @detail 配置 MDC/MDIO、参考时钟、控制寄存器和事件输入输出信号。
+ */
+void Esc_Management_Init(void)
+{
+    // PA31/PA30：ESC 管理接口 MDC/MDIO。
+    HPM_IOC->PAD[IOC_PAD_PA31].FUNC_CTL = IOC_PA31_FUNC_CTL_ESC0_MDC;
+    // PA30：ESC 管理数据 MDIO。
+    HPM_IOC->PAD[IOC_PAD_PA30].FUNC_CTL = IOC_PA30_FUNC_CTL_ESC0_MDIO;
+    // PA09：ESC 外部参考时钟 REFCK。
+    HPM_IOC->PAD[IOC_PAD_PA09].FUNC_CTL = IOC_PA09_FUNC_CTL_ESC0_REFCK;
+    // PB26：ESC 控制信号 CTR6。
+    HPM_IOC->PAD[IOC_PAD_PB26].FUNC_CTL = IOC_PB26_FUNC_CTL_ESC0_CTR_6;
+    // PB27：ESC 控制信号 CTR7。
+    HPM_IOC->PAD[IOC_PAD_PB27].FUNC_CTL = IOC_PB27_FUNC_CTL_ESC0_CTR_7;
+    // PB28：ESC 控制信号 CTR8。
+    HPM_IOC->PAD[IOC_PAD_PB28].FUNC_CTL = IOC_PB28_FUNC_CTL_ESC0_CTR_8;
+    // PD06：ESC 通用输出 GPO38。
+    HPM_IOC->PAD[IOC_PAD_PD06].FUNC_CTL = IOC_PD06_FUNC_CTL_ESC0_GPO_38;
+    // PD03：ESC 通用输入 GPI28。
+    HPM_IOC->PAD[IOC_PAD_PD03].FUNC_CTL = IOC_PD03_FUNC_CTL_ESC0_GPI_28;
+    // PD07：ESC 通用输出 GPO39。
+    HPM_IOC->PAD[IOC_PAD_PD07].FUNC_CTL = IOC_PD07_FUNC_CTL_ESC0_GPO_39;
+    // PC16：ESC 通用输入 GPI47。
+    HPM_IOC->PAD[IOC_PAD_PC16].FUNC_CTL = IOC_PC16_FUNC_CTL_ESC0_GPI_47;
+}
+
+/**
+ * @brief QEI1 编码器引脚初始化函数
+ * @detail 配置编码器 A/B 正交相位和 Z 索引输入。
+ */
+void Qei1_Init(void)
+{
+    // PB29：编码器 Z 索引输入。
+    HPM_IOC->PAD[IOC_PAD_PB29].FUNC_CTL = IOC_PB29_FUNC_CTL_QEI1_Z;
+    // PB30：编码器 A 相输入。
+    HPM_IOC->PAD[IOC_PAD_PB30].FUNC_CTL = IOC_PB30_FUNC_CTL_QEI1_A;
+    // PB31：编码器 B 相输入。
+    HPM_IOC->PAD[IOC_PAD_PB31].FUNC_CTL = IOC_PB31_FUNC_CTL_QEI1_B;
+}
+
+/**
+ * @brief SPI1 外设引脚初始化函数
+ * @detail 配置片选、时钟、主出从入和主入从出信号。
+ * @note SCLK 保留硬件回环配置，便于 SPI 信号采样和自检。
+ */
+void Spi1_Init(void)
+{
+    // PC10：SPI1 时钟输出，并开启 IOC 回环配置。
+    HPM_IOC->PAD[IOC_PAD_PC10].FUNC_CTL = IOC_PC10_FUNC_CTL_SPI1_SCLK | IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
+    // PC13：SPI1 MOSI 数据输出。
+    HPM_IOC->PAD[IOC_PAD_PC13].FUNC_CTL = IOC_PC13_FUNC_CTL_SPI1_MOSI;
+    // PC12：SPI1 MISO 数据输入。
+    HPM_IOC->PAD[IOC_PAD_PC12].FUNC_CTL = IOC_PC12_FUNC_CTL_SPI1_MISO;
+    // PC11：SPI1 片选 CS0。
+    HPM_IOC->PAD[IOC_PAD_PC11].FUNC_CTL = IOC_PC11_FUNC_CTL_SPI1_CS_0;
+}
+
+/**
+ * @brief PWM 外设引脚初始化函数
+ * @detail 配置 PWM0/PWM1 电机控制输出通道。
+ * @note 输出默认安全状态和故障关断由 PWM 外设及应用驱动配置。
+ */
+void Pwm_Init(void)
+{
+    // PC08/PC09：PWM1 通道 P0/P1。
+    HPM_IOC->PAD[IOC_PAD_PC08].FUNC_CTL = IOC_PC08_FUNC_CTL_PWM1_P_0;
+    // PC09：PWM1 通道 P1。
+    HPM_IOC->PAD[IOC_PAD_PC09].FUNC_CTL = IOC_PC09_FUNC_CTL_PWM1_P_1;
+    // PC14：PWM1 通道 P6。
+    HPM_IOC->PAD[IOC_PAD_PC14].FUNC_CTL = IOC_PC14_FUNC_CTL_PWM1_P_6;
+    // PC15：PWM1 通道 P7。
+    HPM_IOC->PAD[IOC_PAD_PC15].FUNC_CTL = IOC_PC15_FUNC_CTL_PWM1_P_7;
+    // PD05：PWM0 通道 P5。
+    HPM_IOC->PAD[IOC_PAD_PD05].FUNC_CTL = IOC_PD05_FUNC_CTL_PWM0_P_5;
+    // PD04：PWM0 通道 P4。
+    HPM_IOC->PAD[IOC_PAD_PD04].FUNC_CTL = IOC_PD04_FUNC_CTL_PWM0_P_4;
+}
+
+/**
+ * @brief ADC 外设引脚初始化函数
+ * @detail 配置多路 PF 端口引脚为模拟输入模式，关闭数字功能，降低数字噪声。
+ *          配置引脚列表：PF27、PF26、PF16、PF24、PF19、PF22、PF23。
+ * @note 写入 IOC_PAD_FUNC_CTL_ANALOG_MASK 后，引脚专用于 ADC 电压采集，
+ *       不再支持 GPIO 数字输入输出；ADC 通道、采样率和校准由 ADC 驱动配置。
+ */
+void Adc_Init(void)
+{
+    // PF27：ADC0.IN00 模拟输入。
+    HPM_IOC->PAD[IOC_PAD_PF27].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
+    // PF26：ADC0.IN01 模拟输入。
+    HPM_IOC->PAD[IOC_PAD_PF26].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
+    // PF16：ADC0.IN08 模拟输入。
+    HPM_IOC->PAD[IOC_PAD_PF16].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
+    // PF24：ADC0.IN10 模拟输入。
+    HPM_IOC->PAD[IOC_PAD_PF24].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
+    // PF19：ADC0.IN13 模拟输入。
+    HPM_IOC->PAD[IOC_PAD_PF19].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
+    // PF22：ADC0.IN14 模拟输入。
+    HPM_IOC->PAD[IOC_PAD_PF22].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
+    // PF23：ADC0.IN15 模拟输入。
+    HPM_IOC->PAD[IOC_PAD_PF23].FUNC_CTL = IOC_PAD_FUNC_CTL_ANALOG_MASK;
+}
