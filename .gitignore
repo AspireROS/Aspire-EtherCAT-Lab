@@ -9,3 +9,6 @@ appengine-generated/
 
 # Visual Studio Code settings
 .vscode/
+
+# HPM5E00EVK generated files and directories
+hpm5e00evk*
